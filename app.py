@@ -35,36 +35,36 @@ def stripe_pay():
 def thanks():
     return render_template('thanks.html')
 
-# @app.route('/stripe_webhook', methods=['POST'])
-# def stripe_webhook():
-#     print('WEBHOOK CALLED')
-#
-#     if request.content_length > 1024 * 1024:
-#         print('REQUEST TOO BIG')
-#         abort(400)
-#     payload = request.get_data()
-#     sig_header = request.environ.get('HTTP_STRIPE_SIGNATURE')
-#     endpoint_secret = 'YOUR_ENDPOINT_SECRET'
-#     event = None
-#
-#     try:
-#         event = stripe.Webhook.construct_event(
-#             payload, sig_header, endpoint_secret
-#         )
-#     except ValueError as e:
-#         # Invalid payload
-#         print('INVALID PAYLOAD')
-#         return {}, 400
-#     except stripe.error.SignatureVerificationError as e:
-#         # Invalid signature
-#         print('INVALID SIGNATURE')
-#         return {}, 400
-#
-#     # Handle the checkout.session.completed event
-#     if event['type'] == 'checkout.session.completed':
-#         session = event['data']['object']
-#         print(session)
-#         line_items = stripe.checkout.Session.list_line_items(session['id'], limit=1)
-#         print(line_items['data'][0]['description'])
-#
-#     return {}
+@app.route('/stripe_webhook', methods=['POST'])
+def stripe_webhook():
+    print('WEBHOOK CALLED')
+
+    if request.content_length > 1024 * 1024:
+        print('REQUEST TOO BIG')
+        abort(400)
+    payload = request.get_data()
+    sig_header = request.environ.get('HTTP_STRIPE_SIGNATURE')
+    endpoint_secret = 'whsec_Bq0oOBZuqpgMdNQBO0Mr660Z5qOJ0ukx'
+    event = None
+
+    try:
+        event = stripe.Webhook.construct_event(
+            payload, sig_header, endpoint_secret
+        )
+    except ValueError as e:
+        # Invalid payload
+        print('INVALID PAYLOAD')
+        return {}, 400
+    except stripe.error.SignatureVerificationError as e:
+        # Invalid signature
+        print('INVALID SIGNATURE')
+        return {}, 400
+
+    # Handle the checkout.session.completed event
+    if event['type'] == 'checkout.session.completed':
+        session = event['data']['object']
+        print(session)
+        line_items = stripe.checkout.Session.list_line_items(session['id'], limit=1)
+        print(line_items['data'][0]['description'])
+
+    return {}
